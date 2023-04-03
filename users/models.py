@@ -1,3 +1,16 @@
+from django.contrib.auth.models import User
 from django.db import models
 
-# Create your models here.
+
+class SubscribtionUser(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="author")
+    subscriber = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="subsriber"
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "subscriber"], name="unique subscriber"
+            )
+        ]
