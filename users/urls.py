@@ -1,11 +1,17 @@
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from .views import UsersAPIView, UserTokenObtainPairView
+from .views import UserFollowView, UserFollowingViewSet, UserTokenObtainPairView, UsersViewSet
+
+router = DefaultRouter()
+
+router.register("profile", UsersViewSet)
+router.register("subscribe", UserFollowingViewSet)
 
 urlpatterns = [
-    path('', UsersAPIView.as_view()),
-    path('login/', UserTokenObtainPairView.as_view()),
-    path('token/refresh/', TokenRefreshView.as_view()),
-    path('auth/', include('djoser.urls.authtoken')),
+    path("", include(router.urls)),
+    path("subs", UserFollowView.as_view()),
+    path("login/", UserTokenObtainPairView.as_view()),
+    path("token/refresh/", TokenRefreshView.as_view()),
 ]

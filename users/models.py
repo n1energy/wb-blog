@@ -3,9 +3,9 @@ from django.db import models
 
 
 class SubscribtionUser(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="author")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="authors")
     subscriber = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="subsriber"
+        User, on_delete=models.CASCADE, related_name="subscribers"
     )
 
     class Meta:

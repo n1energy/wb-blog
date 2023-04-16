@@ -16,6 +16,9 @@ class Article(models.Model):
     def get_absolute_url(self):
         return reverse("post-detail", kwargs={"pk": self.pk})
 
+    class Meta:
+        ordering = ["updated"]
+
 
 class ReadedArticle(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
