@@ -1,9 +1,8 @@
 from django.db.models import Count
-from django.shortcuts import render
 from rest_framework import viewsets, status, mixins
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -12,7 +11,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from users.models import SubscribtionUser
 
 from users.serializers import UserFollowingSerializer, UserSerializer, UserTokenObtainPairSerializer, \
-    SubscriptionUserSerializer
+    SubscriptionUserSerializer, RegistrationSerializer
 
 
 class UsersViewSet(viewsets.ModelViewSet):
@@ -37,8 +36,8 @@ class UsersViewSet(viewsets.ModelViewSet):
     #         serializer.save()
     #         return Response(serializer.data, status=201)
     #     return Response(serializer.errors, status=400)
-    @action(detail=True, methods=["POST"], )  # , permission_classes=[IsAuthenticated])
-    def Subscribe(self, request, *args, **kwargs):
+    @action(detail=True, methods=["POST"],serializer_class=SubscriptionUserSerializer)  # , permission_classes=[IsAuthenticated])
+    def subscribe(self, request, *args, **kwargs):
         queryset = User.objects.filter(pk=self.kwargs['pk'])
         if queryset:
             serializer = SubscriptionUserSerializer(data=dict(subscriber=self.kwargs['pk'], user=request.user.id), context={'request': request})
@@ -48,9 +47,11 @@ class UsersViewSet(viewsets.ModelViewSet):
         return Response({'error': 'This pk is not valid!'}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=["POST"], serializer_class=UserFollowingSerializer)
-    def Sub(self, request, *args, **kwargs):
-        serializer = UserFollowingSerializer(data=request.data)
+    def sub(self, request, *args, **kwargs):
+
         request.data["user"] = self.kwargs['pk']
+        request.data["subscriber"] = self.request.user
+        serializer = UserFollowingSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
@@ -59,8 +60,8 @@ class UsersViewSet(viewsets.ModelViewSet):
     # def perform_create(self, serializer):
     #     serializer.save(subscriber=self.request.user)
 
-class UserFollowingViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.GenericViewSet):
-    # permission_classes = (IsAuthenticatedOrReadOnly,)
+class UserFollowingViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = UserFollowingSerializer
     queryset = SubscribtionUser.objects.all()
 
@@ -87,9 +88,11 @@ class UserFollowingViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, vi
     #     self.perform_create(serializer)
     #     headers = self.get_success_headers(serializer.data)
     #     return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
+    def perform_create(self, serializer):
+        serializer.save(subscriber=self.request.user)
     # def perform_create(self, serializer):
-    #     serializer.save(subscriber=self.request.user)
+    #     serializer.validated_data['subscriber'] = self.request.user
+    #     serializer.save()
 
 class UserFollowView(APIView):
     pass
@@ -97,7 +100,7 @@ class UserFollowView(APIView):
     #     serializer = EventSerializer(data=request.DATA)
     #     if serializer.is_valid():
     #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #         return Response(seusers_subscribtionuser.urializer.data, status=status.HTTP_201_CREATED)
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     # def post(self, request):
     #     serializer = SubscriptionUserSerializer(data=request.data)
@@ -119,7 +122,7 @@ class UsersAPIView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = UserSerializer(data=request.data)
+        serializer = RegistrationSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)

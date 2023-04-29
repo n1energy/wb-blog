@@ -1,0 +1,162 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "blog",
+    "dateExported": "2023-04-24T12:11:51.487Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "985eeee7-f86f-48d8-8c23-ee858013e38c",
+            "colId": "f4434a31-80c7-4970-ad1c-4e894bb6adfb",
+            "containerId": "",
+            "name": "register",
+            "url": "{{host}}/api/users/profile/",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2023-04-19T05:51:33.162Z",
+            "modified": "2023-04-24T05:24:14.749Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"username\": \"test5\",\n  \"email\": \"login5@mail.ru\",\n  \"password\": \"admin\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "90fc63ae-8e52-414d-9a94-9d6682a4f975",
+            "colId": "f4434a31-80c7-4970-ad1c-4e894bb6adfb",
+            "containerId": "",
+            "name": "login",
+            "url": "{{host}}/api/users/login/",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2023-04-19T05:51:46.897Z",
+            "modified": "2023-04-24T05:20:56.578Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"username\":\"admin\",\n  \"password\": \"admin\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "c07438f1-5a0f-4775-954f-f4a5a80c6766",
+            "colId": "f4434a31-80c7-4970-ad1c-4e894bb6adfb",
+            "containerId": "",
+            "name": "login_test",
+            "url": "{{host}}/api/users/login/",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2023-04-19T05:53:05.345Z",
+            "modified": "2023-04-24T04:21:19.089Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"username\":\"test5\",\n  \"password\": \"admin\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "d7987e32-af1a-4ab7-93b5-bce44c352292",
+            "colId": "f4434a31-80c7-4970-ad1c-4e894bb6adfb",
+            "containerId": "",
+            "name": "sub",
+            "url": "{{host}}/api/users/profile/1/sub/",
+            "method": "POST",
+            "sortNum": 40000,
+            "created": "2023-04-19T07:44:26.895Z",
+            "modified": "2023-04-24T05:24:43.894Z",
+            "headers": [],
+            "params": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgyMzM1NDU4LCJqdGkiOiIyYmJiNmE2NWYxYzg0ZjgwOGE2YWE0ODdiNGFlNjVmYSIsInVzZXJfaWQiOjMsInVzZXJuYW1lIjoidGVzdDUiLCJlbWFpbCI6ImxvZ2luNUBtYWlsLnJ1In0.beVjRQS0AaIN3ZlU2cePdzI13JbHMs3jouaN9uflFFQ"
+            },
+            "tests": []
+        },
+        {
+            "_id": "2a708993-6b04-4400-8df9-653d353956f1",
+            "colId": "f4434a31-80c7-4970-ad1c-4e894bb6adfb",
+            "containerId": "",
+            "name": "subscribe",
+            "url": "localhost:8005/api/users/subscribe/",
+            "method": "POST",
+            "sortNum": 50000,
+            "created": "2023-04-19T07:45:29.329Z",
+            "modified": "2023-04-24T04:54:40.129Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"user\": 13\n}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgyMzMxNzMzLCJqdGkiOiIwZDg1ZDQyZDVhNjM0MmIxYmUzZWIzY2VkOTEzZjdhYyIsInVzZXJfaWQiOjEwLCJ1c2VybmFtZSI6InRlc3Q1IiwiZW1haWwiOiJsb2dpbkBtYWlsLnJ1In0.8bm1UxakhjxXSxbxVrtbDHPBxr8sP-PtsU68t1DlREE"
+            },
+            "tests": []
+        },
+        {
+            "_id": "c6714b70-b7bd-481f-96e8-7af733e77997",
+            "colId": "f4434a31-80c7-4970-ad1c-4e894bb6adfb",
+            "containerId": "",
+            "name": "list subscribtions",
+            "url": "{{host}}//api/users/subscribe/",
+            "method": "GET",
+            "sortNum": 60000,
+            "created": "2023-04-20T14:30:27.026Z",
+            "modified": "2023-04-20T14:30:27.026Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "b975aabf-0832-48ca-9ca2-2c5d17e81cbd",
+            "colId": "f4434a31-80c7-4970-ad1c-4e894bb6adfb",
+            "containerId": "",
+            "name": "article add",
+            "url": "{{host}}/api/articles/",
+            "method": "POST",
+            "sortNum": 70000,
+            "created": "2023-04-20T14:59:18.832Z",
+            "modified": "2023-04-20T14:59:18.832Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{}",
+                "form": []
+            },
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgyMDI0Mjc3LCJqdGkiOiI3NGFkMzUwNTkwM2M0YWNhYmI4NWZiODFhMjFkMzVjZCIsInVzZXJfaWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6IiJ9.dnr6dEcFO6tZsKNzrljiSQWx81OXi2gKI_E6kz8RHqs"
+            },
+            "tests": []
+        },
+        {
+            "_id": "656a7228-3934-43f9-9e98-eaddd8ee062f",
+            "colId": "f4434a31-80c7-4970-ad1c-4e894bb6adfb",
+            "containerId": "",
+            "name": "feed",
+            "url": "{{host}}/api/articles/feed/",
+            "method": "GET",
+            "sortNum": 80000,
+            "created": "2023-04-24T04:25:18.980Z",
+            "modified": "2023-04-24T04:25:18.980Z",
+            "headers": [],
+            "params": [],
+            "auth": {
+                "type": "bearer",
+                "bearer": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgyMzMxNzMzLCJqdGkiOiIwZDg1ZDQyZDVhNjM0MmIxYmUzZWIzY2VkOTEzZjdhYyIsInVzZXJfaWQiOjEwLCJ1c2VybmFtZSI6InRlc3Q1IiwiZW1haWwiOiJsb2dpbkBtYWlsLnJ1In0.8bm1UxakhjxXSxbxVrtbDHPBxr8sP-PtsU68t1DlREE"
+            },
+            "tests": []
+        }
+    ]
+}

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
+from rest_framework.validators import UniqueTogetherValidator
 from django.contrib.auth import get_user_model
 from users.models import SubscribtionUser
 
@@ -37,25 +37,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ("id", "username", "email", "password", "num_articles", "authors", "subscribers")
 
-
-class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-        token['username'] = user.username
-        token['email'] = user.email
-        return token
-
-
-class RegistrationSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(max_length=50, min_length=6)
-    username = serializers.CharField(max_length=50, min_length=6)
-    password = serializers.CharField(max_length=150, write_only=True)
-
-    class Meta:
-        model = User
-        fields = ('id', 'first_name', 'last_name', 'email', 'username', 'password')
-
     def validate(self, args):
         email = args.get('email', None)
         username = args.get('username', None)
@@ -70,13 +51,45 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return User.objects.create_user(**validated_data)
 
 
+class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['username'] = user.username
+        token['email'] = user.email
+        return token
+
+
+class RegistrationSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(max_length=50, min_length=6)
+    username = serializers.CharField(max_length=50, min_length=3)
+    password = serializers.CharField(max_length=150, write_only=True)
+
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name', 'email', 'username', 'password')
+
+    def validate(self, args):
+        email = args.get('email', None)
+        username = args.get('username', None)
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError({'email': ('user with this email already exists')})
+        if User.objects.filter(username=username).exists():
+            raise serializers.ValidationError({'username': ('user with this username already exists')})
+
+        return super().validate(args)
+
+    def create(self, validated_data):
+        return User.objects.create_user(**validated_data)
+
+
 class SubscriptionUserSerializer(serializers.ModelSerializer):
-    user = serializers.IntegerField()
-    subscriber = serializers.IntegerField()
+    # user = serializers.IntegerField(source='user.id')
+    # subscriber = serializers.IntegerField(source='subscriber.id')
 
     class Meta:
         model = SubscribtionUser
-        # read_only_fields = ["user", "subscriber"]
+        read_only_fields = ["user", "subscriber"]
         fields = ["user", "subscriber"]
 
     # def validate(self, args):
@@ -93,14 +106,32 @@ class SubscriptionUserSerializer(serializers.ModelSerializer):
 
 
 class UserFollowingSerializer(serializers.ModelSerializer):
-    user = serializers.IntegerField()
-    subscriber = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+    # subscriber = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+    # subscriber = serializers.CharField(source='subscriber.username', read_only=True)
+    # user = serializers.CharField(source='user.username')
 
-    
+    # user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
     class Meta:
         model = SubscribtionUser
-        fields = ["user", "subscriber"]
-        read_only_fields = ["user"]
+        fields = ["id", "user", "subscriber"]
+        read_only_fields = ["subscriber"]
+        # validators = [
+        #     UniqueTogetherValidator(
+        #         queryset=SubscribtionUser.objects.all(),
+        #         fields=["user", "subscriber"],
+        #     )]
+
+    # def validate(self, args):
+    #     user = args.get('user', None)
+    #     subscriber = args.get('subscriber', None)
+    #     if user == subscriber:
+    #         raise serializers.ValidationError({'error': ('cant subscribe to yourself')})
+    #     if SubscribtionUser.objects.filter(user=user, subscriber=subscriber).exists():
+    #         raise serializers.ValidationError({'error': ('already subscribed')})
+    #     return super().validate(args)
+
+
+
 
     # def create(self, validated_data):
     #     instance = SubscribtionUser(
@@ -109,4 +140,3 @@ class UserFollowingSerializer(serializers.ModelSerializer):
     #         subscriber=self.context['request']['user'],
     #     )
     #     return instance
-

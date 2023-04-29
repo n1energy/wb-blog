@@ -4,23 +4,24 @@ from django.urls import reverse
 
 
 class Article(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
     title = models.CharField(max_length=100)
     body = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    read = models.ManyToManyField(User, through='ReadArticle', related_name='read_articles')
 
     def __str__(self):
-        return self.title
+        return f'Id{self.id} {self.title}'
 
     def get_absolute_url(self):
         return reverse("post-detail", kwargs={"pk": self.pk})
 
     class Meta:
-        ordering = ["updated"]
+        ordering = ["created"]
 
 
-class ReadedArticle(models.Model):
+class ReadArticle(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
-    is_readed = models.BooleanField(default=False)
+    is_read = models.BooleanField(default=False)
