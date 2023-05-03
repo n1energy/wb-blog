@@ -9,8 +9,8 @@ class ArticleSerializer(serializers.ModelSerializer):
         fields = ("id", "user", "title", "body", "created", "updated")
         read_only_fields = ["user"]
 
+
 class ReadArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReadArticle
         fields = ("user", "article", "is_read")
-        

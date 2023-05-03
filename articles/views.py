@@ -20,7 +20,8 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def feed(self, request, *args, **kwargs):
-        user_follow_id = SubscribtionUser.objects.filter(subscriber_id=self.request.user).values_list('user_id', flat=True)
+        user_follow_id = SubscribtionUser.objects.filter(subscriber_id=self.request.user).values_list('user_id',
+                                                                                                      flat=True)
         queryset = Article.objects.filter(user__in=user_follow_id)
         # response = super().list(self, request, *args, **kwargs)
         # return response
@@ -53,3 +54,7 @@ class ReadArticleViewSet(mixins.UpdateModelMixin, viewsets.GenericViewSet):
     serializer_class = ReadArticleSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = 'article'
+
+    def get_object(self):
+        obj, _ = ReadArticle.objects.get_or_create(user=self.request.user, article_id=self.kwargs['article'])
+        return obj

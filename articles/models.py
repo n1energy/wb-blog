@@ -9,7 +9,7 @@ class Article(models.Model):
     body = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    read = models.ManyToManyField(User, through='ReadArticle', related_name='read_articles')
+    readers = models.ManyToManyField(User, through='ReadArticle', related_name='read_articles')
 
     def __str__(self):
         return f'Id{self.id} {self.title}'
@@ -25,3 +25,6 @@ class ReadArticle(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.user.username}: {self.article.title}, read: {self.is_read}'

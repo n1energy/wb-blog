@@ -121,14 +121,14 @@ class UserFollowingSerializer(serializers.ModelSerializer):
         #         fields=["user", "subscriber"],
         #     )]
 
-    # def validate(self, args):
-    #     user = args.get('user', None)
-    #     subscriber = args.get('subscriber', None)
-    #     if user == subscriber:
-    #         raise serializers.ValidationError({'error': ('cant subscribe to yourself')})
-    #     if SubscribtionUser.objects.filter(user=user, subscriber=subscriber).exists():
-    #         raise serializers.ValidationError({'error': ('already subscribed')})
-    #     return super().validate(args)
+    def validate(self, args):
+        user = args.get('user', None)
+        subscriber = self.initial_data.get('subscriber', None)
+        if user == subscriber:
+            raise serializers.ValidationError({'error': ('cant subscribe to yourself')})
+        if SubscribtionUser.objects.filter(user=user, subscriber=subscriber).exists():
+            raise serializers.ValidationError({'error': ('already subscribed')})
+        return super().validate(args)
 
 
 
