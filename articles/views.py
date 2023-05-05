@@ -23,8 +23,6 @@ class ArticleViewSet(viewsets.ModelViewSet):
         user_follow_id = SubscribtionUser.objects.filter(subscriber_id=self.request.user).values_list('user_id',
                                                                                                       flat=True)
         queryset = Article.objects.filter(user__in=user_follow_id)
-        # response = super().list(self, request, *args, **kwargs)
-        # return response
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -34,7 +32,13 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def feed_read(self, request, *args, **kwargs):
-        pass
+        queryset = User.article.all()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
     # def get_queryset(self):
     #     user_follow_id = SubscribtionUser.objects.filter(subscriber=self.request.user)
