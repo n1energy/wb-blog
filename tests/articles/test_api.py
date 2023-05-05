@@ -21,6 +21,8 @@ class ArticlesApiTestCase(APITestCase):
     def setUp(self):
         self.user_1 = User.objects.create_user(username="alex", password="wbblog")
         self.user_2 = User.objects.create_user(username="murfy", password="wbblog")
+        # refresh = RefreshToken.for_user(self.user_1)
+        # self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh.access_token}')
 
         self.article_1 = Article.objects.create(
             title="Test_article_1", body="hello_1", user=self.user_1
@@ -60,11 +62,8 @@ class ArticlesApiTestCase(APITestCase):
         url = reverse("articles-list")
         data = {"title": "Python 310", "body": "new release!"}
         json_data = json.dumps(data)
-
-        print(self.bearer_token(self.user_1))
         response = self.client.post(
-            # url, data=json_data, content_type="application/json", **{"HTTP_AUTHORIZATION": self.create_jwt_token(self.user_1)})
-            url, data=json_data, content_type="application/json", **self.bearer_token(self.user_1))
+            url, data=json_data, content_type="application/json")
+        self.assertEqual(status.HTTP_404_NOT_FOUND, response.status_code)
         self.assertEqual(status.HTTP_201_CREATED, response.status_code)
         self.assertEqual(4, Article.objects.all().count())
-        # self.assertEqual(Article.objects.last().master, self.user_2)
