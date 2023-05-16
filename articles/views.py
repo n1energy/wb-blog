@@ -1,3 +1,5 @@
+from django.db.models import Q
+from django_filters.rest_framework import DjangoFilterBackend
 from requests import Response
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
@@ -7,22 +9,24 @@ from articles.serializers import ArticleSerializer, ReadArticleSerializer
 from django.contrib.auth.models import User
 
 from articles.models import Article, ReadArticle
-from users.models import SubscribtionUser
+from users.models import SubscriptionUser
 
 
 class ArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
-    # permission_classes = [IsAuthenticatedOrReadOnly]
-    filter_backends = [OrderingFilter]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend]
     ordering_fields = ["created", "updated"]
+    filterset_fields = ["readarticle__is_read"]
     ordering = ["-created"]
 
-    @action(detail=False, permission_classes=[IsAuthenticated])
+    @action(detail=False, permission_classes=[IsAuthenticated], serializer_class=ArticleSerializer)
     def feed(self, request, *args, **kwargs):
-        user_follow_id = SubscribtionUser.objects.filter(subscriber_id=self.request.user).values_list('user_id',
-                                                                                                      flat=True)
-        queryset = Article.objects.filter(user__in=user_follow_id)
+        # user_follow_id = SubscriptionUser.objects.filter(subscriber_id=self.request.user).values_list('user_id',
+        #                                                                                               flat=True)
+        # queryset1 = Article.objects.filter(user__in=user_follow_id)
+        queryset = Article.objects.filter(user__authors__subscriber=self.request.user)
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -30,9 +34,12 @@ class ArticleViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, permission_classes=[IsAuthenticated])
+    @action(detail=False, permission_classes=[IsAuthenticated], serializer_class=ArticleSerializer)
     def feed_read(self, request, *args, **kwargs):
-        queryset = User.article.all()
+        queryset = Article.objects.filter(
+            Q(user__authors__subscriber=self.request.user, readarticle__is_read=False) | Q(
+                user__authors__subscriber=self.request.user,
+                readarticle__is_read=None))
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)

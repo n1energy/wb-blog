@@ -4,7 +4,7 @@ from django.urls import reverse
 
 
 class Article(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     title = models.CharField(max_length=100)
     body = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
@@ -12,7 +12,7 @@ class Article(models.Model):
     readers = models.ManyToManyField(User, through='ReadArticle', related_name='read_articles')
 
     def __str__(self):
-        return f'Id{self.id} {self.title}'
+        return f'id {self.id} {self.title}'
 
     def get_absolute_url(self):
         return reverse("post-detail", kwargs={"pk": self.pk})

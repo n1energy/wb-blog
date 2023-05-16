@@ -2,13 +2,13 @@ from django.db.models import Count
 from rest_framework import viewsets, status, mixins
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.views import TokenObtainPairView
-from users.models import SubscribtionUser
+from users.models import SubscriptionUser
 
 from users.serializers import UserFollowingSerializer, UserSerializer, UserTokenObtainPairSerializer, \
     SubscriptionUserSerializer, RegistrationSerializer
@@ -18,7 +18,7 @@ class UsersViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all().annotate(
         num_articles=Count("article"))
     serializer_class = UserSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     filter_backends = [OrderingFilter]
 
     def get_object(self):
@@ -36,7 +36,7 @@ class UsersViewSet(viewsets.ModelViewSet):
     #         serializer.save()
     #         return Response(serializer.data, status=201)
     #     return Response(serializer.errors, status=400)
-    @action(detail=True, methods=["POST"],serializer_class=SubscriptionUserSerializer)  # , permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=["POST"],serializer_class=SubscriptionUserSerializer, permission_classes=[IsAuthenticated])
     def subscribe(self, request, *args, **kwargs):
         queryset = User.objects.filter(pk=self.kwargs['pk'])
         if queryset:
@@ -63,7 +63,7 @@ class UsersViewSet(viewsets.ModelViewSet):
 class UserFollowingViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     serializer_class = UserFollowingSerializer
-    queryset = SubscribtionUser.objects.all()
+    queryset = SubscriptionUser.objects.all()
 
     # @action(detail=True, methods=["POST"])
     # def suby(self, request, *args, **kwargs):
@@ -96,26 +96,6 @@ class UserFollowingViewSet(viewsets.ModelViewSet):
     # def perform_create(self, serializer):
     #     serializer.validated_data['subscriber'] = self.request.user
     #     serializer.save()
-
-class UserFollowView(APIView):
-    pass
-    # def post(self, request, format=None):
-    #     serializer = EventSerializer(data=request.DATA)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(seusers_subscribtionuser.urializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    # def post(self, request):
-    #     serializer = SubscriptionUserSerializer(data=request.data)
-    #     UserFollowing.objects.create(user_id=user.id, following_user_id=follow.id)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=201)
-    #     return Response(serializer.errors, status=400)
-    
-    # def delete(self, request):
-
-
 
 class UsersAPIView(APIView):
     def get(self, request):

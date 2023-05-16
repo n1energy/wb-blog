@@ -3,18 +3,18 @@ from django.contrib.auth.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.validators import UniqueTogetherValidator
 from django.contrib.auth import get_user_model
-from users.models import SubscribtionUser
+from users.models import SubscriptionUser
 
 
 class AuthorsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SubscribtionUser
+        model = SubscriptionUser
         fields = ("id", "subscriber")
 
 
 class SubscribersSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SubscribtionUser
+        model = SubscriptionUser
         fields = ("id", "user")
 
 
@@ -88,7 +88,7 @@ class SubscriptionUserSerializer(serializers.ModelSerializer):
     # subscriber = serializers.IntegerField(source='subscriber.id')
 
     class Meta:
-        model = SubscribtionUser
+        model = SubscriptionUser
         read_only_fields = ["user", "subscriber"]
         fields = ["user", "subscriber"]
 
@@ -112,7 +112,7 @@ class UserFollowingSerializer(serializers.ModelSerializer):
 
     # user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
     class Meta:
-        model = SubscribtionUser
+        model = SubscriptionUser
         fields = ["id", "user", "subscriber"]
         read_only_fields = ["subscriber"]
         # validators = [
@@ -126,7 +126,7 @@ class UserFollowingSerializer(serializers.ModelSerializer):
         subscriber = self.initial_data.get('subscriber', None)
         if user == subscriber:
             raise serializers.ValidationError({'error': ('cant subscribe to yourself')})
-        if SubscribtionUser.objects.filter(user=user, subscriber=subscriber).exists():
+        if SubscriptionUser.objects.filter(user=user, subscriber=subscriber).exists():
             raise serializers.ValidationError({'error': ('already subscribed')})
         return super().validate(args)
 
